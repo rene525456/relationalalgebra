@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>ANEXARE v0.1</title>
+
+        <!-- Bootstrap -->
+        <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+
+        <!-- Handsontable -->
+        <link rel="stylesheet" media="screen" href="{{url_for('static', filename='css/jquery.handsontable.full.min.css')}}">
+
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <!--script type="text/javascript" src="{{url_for('static', filename='files/jquery.min.js')}}"></script-->
+        <style>
+            #pantalla {
+                min-height: 300px;
+                border: 1px solid lightgray;
+            }
+            #lasts {
+                min-height: 200px;
+                height: 200px;
+                border: 1px solid lightgray;
+                margin-top: 10px;
+                overflow: scroll;
+            }
+            .page-header{
+                margin-top: 48px;
+            }
+
+            #main {
+                margin-top: 55px;
+            }
+
+            #panel-relaciones li:hover {
+                cursor: pointer;
+            }
+
+            pre {
+                background-color: lightblue;
+                border: none;
+                min-height: 300px;
+                overflow: auto;
+                border-radius: none;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">ANEXARE</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" data-toggle="modal" data-target="#modalAyuda">Ayuda</a></li>
+                </ul>
+            </div>
+        </div>
+        </nav>
+
+        <div class="container-fluid" id="main">
+            <div class="row">
+                <!--sidebar-->
+                <div class="col-sm-3 col-md-2">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="panel-title text-left">Menu</div>
+                        </div>
+                        <div class="panel-body btn-group-vertical btn-block">
+                            <a href="#" class="btn btn-default" data-toggle="modal" data-target="#modalAbout">
+                                <i class="icon-home"></i> Acerca de
+                            </a>
+                            <a href="#" class="btn btn-default">
+                                <i class="icon-home"></i> Encuesta
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="panel-title text-left">Operadores</div>
+                        </div>
+                        <div class="panel-body btn-group-vertical btn-block">
+                            <a href="#" title="PRODUCTO" class="btn btn-default btn-xs operadores nodelete" data-name="_PRODUCT">*</a>
+                            <a href="#" title="DIFERENCIA" class="btn btn-default btn-xs operadores nodelete" data-name="_DIFFERENCE">-</a>
+                            <a href="#" title="UNIÓN" class="btn btn-default btn-xs operadores nodelete" data-name="_UNION">ᑌ</a>
+                            <a href="#" title="INTERSECCION" class="btn btn-default btn-xs operadores nodelete" data-name="_INTERSECTION">ᑎ</a>
+                            <a href="#" title="DIVISION" class="btn btn-default btn-xs operadores nodelete" data-name="_DIVISION ">÷</a>
+                            <a href="#" title="AND" class="btn btn-default btn-xs operadores nodelete" data-name=" and ">∧</a>
+                            <a href="#" title="OR" class="btn btn-default btn-xs operadores nodelete" data-name=" or ">∨</a>
+                            <a href="#" title="NOT" class="btn btn-default btn-xs operadores nodelete" data-name=" not ">¬</a>
+                            <a href="#" title="JOIN" class="btn btn-default btn-xs operadores nodelete" data-name="_JOIN ">ᐅᐊ</a>
+                            <a href="#" title="LEFT JOIN" class="btn btn-default btn-xs operadores nodelete" data-name="_LJOIN ">ᐅLEFTᐊ</a>
+                            <a href="#" title="RIGHT JOIN" class="btn btn-default btn-xs operadores nodelete" data-name="_RJOIN ">ᐅRIGHTᐊ</a>
+                            <a href="#" title="FULL JOIN" class="btn btn-default btn-xs operadores nodelete" data-name="_FJOIN ">ᐅFULLᐊ</a>
+                            <a href="#" title="PROYECCIÓN" class="btn btn-default btn-xs operadores nodelete" data-name="_PROJECTION ">π</a>
+                            <a href="#" title="SELECCIÓN" class="btn btn-default btn-xs operadores nodelete" data-name="_SELECTION ">σ</a>
+                            <a href="#" title="RENOMBRAR" class="btn btn-default btn-xs operadores nodelete" data-name="_RENAME ">ρ</a>
+                            <a href="#" title="RENOMBRAR A" class="btn btn-default btn-xs operadores nodelete" data-name="_RENAME_TO ">➡</a>
+                        </div>
+                    </div>
+                </div><!--/sidebar-->
+
+                <!--main-->
+                <div class="col-sm-9 col-md-10 main">
+                    <!--toggle sidebar button-->
+
+                    <div class="row placeholders">
+                        <div class="col-xs-9 placeholder text-center">
+                            <div id="pantalla" class="text-left"><pre>Relational Web</pre></div>
+                            <div id="lasts" class="list-group text-left">
+                            </div>
+
+                            <div class="col-xs-12">
+                                <!--button class="btn btn-default">Optimizar</button>
+                                <button class="btn btn-default">Deshacer Optimización</button-->
+                                <button class="btn btn-default" name="limpiar">Limpiar Historial</button>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="panel-title">Relaciones</div>
+                                </div>
+                                <div class="panel-body">
+                                    <ul id="panel-relaciones" class="list-group">
+                                    </ul>
+                                </div>
+                                <div class="panel-footer btn-group-vertical" style="width:100%; text-align:center">
+                                    <button data-toggle="modal" data-target="#newRelationModal" class="btn btn-sm btn-default">Nueva Relación</button>
+                                    <button class="btn btn-sm btn-default" data-toggle="modal" data-target="#modalCargar">Cargar Relación</button>
+                                    <button class="btn btn-sm btn-default" name="descargar">Descargar Relación</a>
+                                    <button class="btn btn-sm btn-default" name="modal_editar">Editar Relación</button>
+                                    <button name="quitar_relacion" class="btn btn-sm btn-default">Quitar Relación</button>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="panel-title">Atributos</div>
+                                </div>
+                                <div class="panel-body" id="atributos">
+                                    <div class="col-sm-12"><i>Atributo1</i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- modal para cargar una relación -->
+                    <!-- Modal -->
+                    <div class="modal fade" id="modalCargar" tabindex="-1" role="dialog" aria-labelledby="newRelModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="newRelModalLabel">Cargar Relación</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="upload-file" method="post" enctype="multipart/form-data">
+                                        <fieldset>
+                                            <label for="file">Seleccione una relación</label>
+                                            <input name="file" type="file">
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+                                    <button type="button" id="upload-file-btn" class="btn btn-sm btn-default">Subir Relación</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- fin modal -->
+                    <hr>
+
+                </div><!--/row-->
+                </div>
+            </div><!--/.container-->
+
+        <div class="container-fluid">
+            <div class="row">
+                <br>
+                <div class="input-group">
+                    <input type="text" name="comando" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" name="ejecutar"><i class="glyphicon glyphicon-ok"></i> </button>
+                        <button class="btn btn-default" type="button" name="borrar"><i class="glyphicon glyphicon-remove"></i> </button>
+                    </span>
+                </div><!-- /input-group -->
+            </div>
+        </div>
+
+        <!-- Nueva Relación Modal -->
+        <div class="modal fade" id="newRelationModal" tabindex="-1" role="dialog" aria-labelledby="newRelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="newRelModalLabel">Nueva Relación</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <label for="relname">Nombre:</label>
+                            <input type="text" name="relname" class="form-control" required>
+                        </div>
+                        <br>
+                        <div class="handsontable" id="sheetrelation"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button name="guardar_relacion" type="button" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editar Relación Modal -->
+        <div class="modal fade" id="editRelationModal" tabindex="-1" role="dialog" aria-labelledby="editRelationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="editRelationModal">Editar Relación</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <label for="relname">Nombre:</label>
+                            <input type="text" name="relname" class="form-control" required disabled>
+                        </div>
+                        <br>
+                        <div class="handsontable" id="sheetrelationedit"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button name="editar_relacion" type="button" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Ayuda -->
+        <div class="modal fade" id="modalAyuda" tabindex="-1" role="dialog" aria-labelledby="ayudaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                        <h4 class="modal-title" id="ayudaModalLabel">Ayuda</h4>
+                    </div>
+                    <div class="modal-body" style="overflow: scroll; height: 400px">
+                        <h1>ALGEBRA RELACIONAL</h1>
+                        <p>A continuación se explicarán las operaciones fundamentales del álgebra relacional. </p>
+                        <h2>
+                            PROYECCIÓN
+                        </h2>
+                        <p>La proyección es una operación unaria que se denota por la letra griega pi (π). La proyección permite extraer las columnas o atributos que se requieren de una relación, estas pueden ser una o todas, obteniendo así un subconjunto vertical de atributos de la relación.
+                        Por ejemplo:</p>
+                        <span>_PROJECTION nombre,apellido,sexo(alumno)</span>
+
+                        <h2>SELECCIÓN</h2>
+                        <p>La selección es una operación unaria que se denota por la letra minúscula griega sigma (σ). Esta operación permite extraer un subconjunto de tuplas o filas que satisfagan un predicado dado.
+                        Por ejemplo:</p>
+
+                        <span>_SELECTION fecha_nac (alumno)</span>
+
+                        <h2>PRODUCTO CARTESIANO</h2>
+                        <p>El producto cartesiano se denota por (*) y se generan como resultado de dos conjuntos donde obtenemos todos los pares ordenados de cada posible par de tuplas de estos conjuntos o relaciones.
+                        Por ejemplo: </p>
+
+                        <span>PROJECTION nombre_doc(docente) _PRODUCT _PROJECTION nombre(alumno)</span>
+
+                        <h2>UNIÓN</h2>
+                        <p>La operación binaria de unión se denota, al igual que en teoría de conjuntos, por (U). La unión solamente une relaciones compatibles de las tuplas de dos relaciones.
+                        Por ejemplo: </p>
+
+                        <span>_PROJECTION nced(docente) _UNION _PROJECTION nced(alumno)</span>
+
+                        <h2>DIFERENCIA</h2>
+                        <p>Esta operación se denota con el símbolo (-). Para poder aplicar este operador, las dos relaciones tienen que ser compatibles. El resultado de la diferencia, es una relación obtenida al incluir todas las tuplas de la primera relación que no aparecen en la segunda relación.
+                        Por ejemplo: </p>
+
+                        <span>_PROJECTION fecha_nac(alumno) _DIFFERENCE _PROJECTION fecha_nac(modulo)</span>
+
+                        <h2>RENOMBRE</h2>
+                        <p>La operación de renombre en algunas ocasiones se clasifica como una operación auxiliar. Esta operación se denotada por la letra minúscula griega rho (ρ), es una operación unaria. El resultado de aplicar el operador de renombre a una relación es una relación idéntica a la original a excepción de que los atributos tienen nuevos nombres.
+                        Por ejemplo:</p>
+
+                        <h2>INTERSECCIÓN</h2>
+                        <p>La intersección, se denotada por (∩) y se trata de una operación binaria. Después de aplicar el operador de intersección obtenemos una relación que contiene solamente aquella tuplas de la primera relación que aparecen también como tuplas de la segunda relación.
+                        Por ejemplo: </p>
+                        <span>_PROJECTION nm (proyecto) _INTERSECTION _PROJECTION nm(alumno)</span>
+
+                        <h2>DIVISIÓN</h2>
+                        <p>La división es una operación binaria denotada por (÷). El resultado de aplicar la operación de división es que sólo se seleccionan los atributos únicos de la primera relación pero no en la de la segunda relación, tales que existen todas sus combinaciones con las tuplas de segunda relación en la primera.
+                        Por ejemplo:</p>
+                        <span>_PROJECTION nombre, apellido,nm(alumno) _DIVISION  _PROJECTION nm( _SELECTION localizacionp=='supermaxi'(proyecto))</span>
+
+                        <h2>JOIN</h2>
+                        <p>Otra operación adicional que vamos a describir es el natural join (o reunión natural). Es una operación binaria denotada por (). El natural join es una operación muy utilizada que nos permite combinar relaciones que tienen algún atributo común sin necesidad de especificar nada más.
+                        Por ejemplo:</p>
+                        <span>
+                            docente _JOIN alumno
+                        </span>
+
+                        <h2>LEFT JOIN</h2>
+                        <p>Se denota por (  ). Esta operación se aplica a dos relaciones de las cuales obtenemos todas las combinaciones de tuplas que son iguales entre los atributos comunes de estas relaciones, además de las tuplas de la primera relación que no tienen pareja en los atributos de la segunda relación.
+                        Por ejemplo:</p>
+                        <span class="ejemplo">docente  _LJOIN alumno
+                        </span>
+
+                        <h2>RIGHT JOIN</h2>
+                        <p>Su estructura es muy similar al left join. Se denota por (  ). Esta operación aplicada a dos relaciones donde obtenemos el conjunto de todas las combinaciones de las tuplas que son iguales en sus atributos comunes, además de las tuplas de la segunda relación que no tienen pareja en los atributos de la primera relación.
+                        Por ejemplo:</p>
+
+                        <span class="ejemplo">docente _RJOIN alumno</span>
+
+                        <h2>FULL JOIN</h2>
+                        <p>Denotado por ( ) y cuyo resultado aplicado a dos relaciones es el conjunto de todas las combinaciones de tuplas de las dos relaciones que son iguales en sus atributos comunes, además de las tuplas de estas relaciones que no tienen parejas entre sí.
+                        Por ejemplo:</p>
+
+                        <span class="ejemplo">docente _FJOIN alumno</span>
+
+                        <h2>Operadores Boolenaos</h2>
+
+                        <p>Los operadores booleanos (AND, NOT, OR) localizan registros que contienen los términos coincidentes en uno de los campos especificados o en todos los campos especificados. Dentro de algebra relacional también se utiliza estos operadores para realizar consultas.
+                        </p>
+
+                        <h2>OPERADOR AND</h2>
+                        <p>Utilizar el operador AND para localizar tuplas que contengan todos los términos de búsqueda especificados. Por ejemplo, si se busca por "nombre AND apellidos" de la Relación Alumno se localiza las tuplas que contengan todos los términos especificados.
+                        Por ejemplo:
+                        </p>
+
+                        <span class="ejemplo">_SELECTION sexo=='F'and tutores>2(alumno)</span>
+
+                        <h2>OPERADOR OR</h2>
+                        <p>Utilizar el operador OR para localizar tuplas que contengan cualquiera o todos los términos especificados. Por ejemplo, si se busca por "nombre OR apellidos" de la Relación Alumno, se localiza registros que contengan el primer término o el segundo.
+                        Por ejemplo:
+                        </p>
+
+                        <span class="ejemplo">_SELECTION apellido=='Torres'  or tutores>3(alumno)</span>
+
+                        <h2>OPERADOR NOT</h2>
+                        <p>Utilizar el operador NOT para localizar tuplas que contengan el primer término de búsqueda pero no el segundo. Por ejemplo, si se busca por "nombre NOT apellidos" de la Relación Alumno, se localiza registros que contienen el primer término pero no el segundo.
+                        Por ejemplo:</p>
+
+                        <span class="ejemplo">_SELECTION nm>2 and not apellido=='Narvaez'(alumno)</span>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal acerca de -->
+        <div class="modal fade" id="modalAbout" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                        <h4 class="modal-title" id="aboutModalLabel">Acerca de</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h1>ANEXARE versión 1.1.</h1>
+                        <h4>Autores:</h4>
+                        <ul>
+                            <li>Johana Cueva (yohan_ely@hotmai.com)</li>
+                            <li>Stalin Tuza (stafatual@hotmail.com)</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+          <p class="pull-right">©2014 UNL</p>
+        </footer>
+
+        <!-- Docs master nav -->
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script type="text/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+        <!-- RZ esta es la nueva implementación sin intérprete de comandos -->
+        <script type="text/javascript" src="{{url_for('static', filename='files/terminal2.js')}}"></script>
+        <!-- Handsontable para tablas cool -->
+        <script tyle="text/javascript" src="{{url_for('static', filename='js/jquery.handsontable.full.min.js')}}"></script>
+    </body>
+</html>
+

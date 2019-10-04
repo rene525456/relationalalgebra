@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Try Relational! Una consola interactiva en tu navegador</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="description" content="Try Relacional in your browser! una consola interactiva para el paquete relacional.">
+        <!--link rel="stylesheet" href="{{url_for('static', filename='files/reset.css') }}" type="text/css" media="screen"-->
+        <link rel="stylesheet" href="{{url_for('static', filename='files/tryrelational.css')}}" type="text/css" media="screen">
+        <link href="{{url_for('static', filename='files/bootstrap.icons.css')}}" rel="stylesheet">
+	<link href="{{url_for('static', filename='files/jquery.toolbars.css')}}" rel="stylesheet" />
+	<!--[if lte IE 6]>
+		<style type="text/css" media="screen">
+		  div.primary-content { width:600px;margin-left:70px;float:left }
+		</style>
+	<![endif]-->
+	<!--script type="text/javascript" src="files/lib.js"></script-->
+        <!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
+        <script type="text/javascript" src="{{url_for('static', filename='files/jquery.min.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='files/jqueryfu/js/vendor/jquery.ui.widget.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='files/jqueryfu/js/jquery.fileupload.js')}}"></script>
+	<script type="text/javascript">
+            //jQuery.noConflict();
+            $(document).ready(function(){
+                'use strict';
+                // Change this to the location of your server-side upload handler:
+                var url = '/upload.json';
+                $('#fileupload').fileupload({
+                    url: url,
+                    dataType: 'json',
+                    done: function (e, data) {
+                        $.each(data.result, function (index, file) {
+                            //cargar en la consola este archivo
+                            miconsola.promptText("LOAD data/" + file.name);
+                        });
+                    },
+                }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            });
+            
+
+
+	</script>
+	<!-- RZ esta es la libreria de la consola -->
+        <script type="text/javascript" src="{{url_for('static', filename='files/jquery-console.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='files/tryrelational.js')}}"></script>
+    <!-- RZ we don't know what is raphael for in here -->
+	<!--script type="text/javascript" src="files/raphael-min.js"></script-->
+
+        <script src="{{url_for('static', filename='files/jquery.toolbar.js')}}"></script>
+        <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+        <!--link rel="stylesheet" href="{{url_for('static', filename='files/jqueryfu/css/style.css')}}"-->
+        <link rel="stylesheet" href="{{url_for('static', filename='files/jqueryfu/css/jquery.fileupload.css')}}">
+        <!-- Bootstrap styles -->
+        <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"-->
+        <style>
+            .settings-button {
+              background-color: #343433;
+              border: 1px solid #161615;
+              border-radius: 5px 5px 5px 5px;
+              box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.26) inset, 0 1px 0 0 rgba(255, 255, 255, 0.15);
+              display: block;
+              height: 28px;
+              margin: 0px 20px;
+              opacity: 0.7;
+              width: 36px;
+              z-index: 2;
+            }
+
+            .settings-button img {
+              display: block;
+              margin: 5px auto 0;
+              z-index: -1;
+          }
+
+.fileinput-button {
+    overflow: hidden;
+    position: relative;
+}
+.btn-success {
+    background-color: #5CB85C;
+    border-color: #4CAE4C;
+    color: #FFFFFF;
+}
+.btn {
+    -moz-user-select: none;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 4px 4px 4px 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.fileinput-button input {
+    cursor: pointer;
+    direction: ltr;
+    font-size: 200px;
+    margin: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+input[type="file"] {
+    display: block;
+}
+button, input, select[multiple], textarea {
+    background-image: none;
+}
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+button, input {
+    line-height: normal;
+}
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+}
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+}
+        </style>
+</head>
+<body>
+	<div class="page-wrap">
+            <div class="primary-content">
+			<div class="main-wrapper ">
+                            <div class="main-wrapper-borders">
+                                <h2 class="main-header">Relacional, consola web de lenguaje</h2>
+                                <div class="menu clearfix">
+                                    <a class="reset-btn" href="javascript:">
+                                        <span>Reset</span>
+                                    </a>
+                                </div>
+                                <div class="clear"></div>
+                                <div class="console-wrapper">
+                                    <div class="console-wrapper-borders ">
+                                        <!-- RZ aqui va la consola -->
+                                        <div class="console">
+                                        </div>
+                                    </div>
+                                    <div class="console-wrapper-bottom sprites"></div>
+                                </div>
+                                <div id="container1" style="overflow:hidden;width:100%">
+                                    <div id="inner" style="overflow:hidden;width: 2000px">
+                                        <div style="float:left;width:75px;height:50px">
+                                            <div id="normal-button" class="settings-button"><img src="{{ url_for('static', filename='img/icon-cog-small.png')}}" /></div>
+                                            <div id="user-options" class="toolbar-icons" style="display: none;">
+                                                <a href="#"><i class="icon-user"></i></a>
+                                                <a href="#"><i class="icon-star"></i></a>
+                                                <a href="#"><i class="icon-edit"></i></a>
+                                                <a href="#"><i class="icon-delete"></i></a>
+                                                <a href="#"><i class="icon-ban"></i></a>
+                                            </div>
+                                        </div>
+                                        <div style="float:left;width:150px;height:50px">
+                                            <!-- RZ el toolbar -->
+                                            <div class="row">
+                                                <div class="btn btn-success fileinput-button">
+                                                    <i class="glyphicon glyphicon-plus"></i>
+                                                    <span>Subir Datos...</span>
+                                                    <!-- The file input field used as target for the file upload widget -->
+                                                    <input id="fileupload" type="file" name="files[]" multiple>
+                                                </div>
+                                            </div>
+                                            <div id="progress" class="progress">
+                                                <div class="progress-bar progress-bar-success"></div>
+                                            </div>
+                                        </div>
+                                        <div style="float:left;width:50px;height:50px">
+                                            <!-- RZ aqui poner otros elementos si quieren -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="guide-wrapper">
+                                    <div class="guide-wrapper-top sprites"></div>
+                                    <div class="guide-wrapper-borders ">
+                                        <div class="guide">
+                                            <div id="learn-more">
+                                                <div class="indent btw">
+                                                    <h3>Como usar la consola?</h3>
+                                                    <p class="clearfix">
+                                                    Poner aqui una ayuda basica de como funciona esto
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <h3>Tutorial Interactivo</h3>
+                                            <div class="indent">
+                                                <p>Escriba <code title="Haga click para insertar &quot;ayuda&quot; en la consola." style="cursor: pointer;">ayuda</code> para iniciar la ayuda. 
+                                                Escriba <code title="Haga click para insertar &quot;tutor&quot; en la consola." style="cursor: pointer;">tutor</code> para ver el tutorial.</p>
+                                                <p>O pruebe con los siguientes comandos para ver que sucede.
+                                                <small class="note">(Haga click para insertar)</small>:</p>
+                                                <p>
+                                                <code title="Haga click para insertar &quot;23*36&quot; en la consola." style="cursor: pointer;">23*36</code> o <code title="Haga click para insertar &quot;reverse &quot;hello&quot;&quot; en la consola." style="cursor: pointer;">reverse "hello"</code> o <code title="Haga click para insertar&quot;foldr (:) [] [1,2,3]&quot; en la consola." style="cursor: pointer;">foldr (:) [] [1,2,3]</code>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="guide-wrapper-bottom sprites"></div>
+                                </div>
+                            </div>
+				<div class="main-wrapper-bottom sprites"></div>
+			</div>
+			<div class="footer-wrapper  clearfix">
+				<div class="footer-wrapper-top sprites"></div>
+				<div class="footer-wrapper-borders ">
+					<div class="footer">
+						<p>
+						Poner un pie <a href="">aqui</a>
+						</p>
+					</div>
+				</div>
+				<div class="footer-wrapper-bottom sprites"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function($) {
+
+            // Define any icon actions before calling the toolbar
+            $('.toolbar-icons a').on('click', function( event ) {
+                event.preventDefault();
+            });
+
+			$('#normal-button').toolbar({content: '#user-options', position: 'top'});
+        });
+    
+    </script>
+</body>
+</html>
